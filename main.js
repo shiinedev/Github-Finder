@@ -6,7 +6,7 @@ const h1 = document.querySelector("h1");
 const h2 = document.querySelector("h2");
 const a = document.querySelector("a");
 
-
+//loead data  from local storage 
 const loadData = () =>{
     const oldData = getdataFromLocal();
     oldData.forEach(element => {
@@ -16,6 +16,7 @@ const loadData = () =>{
 }
 document.addEventListener("DOMContentLoaded",loadData);
 
+//changes the navigation bar
 a.addEventListener("click", (e) =>{
     e.preventDefault();
     h1.textContent = "Go back";
@@ -34,6 +35,8 @@ a.addEventListener("click", (e) =>{
      })
      
 })
+
+// fetch data from api 
 const fetchUsersData = async (e) =>  {
     e.preventDefault();
     try {
@@ -54,22 +57,22 @@ const fetchUsersData = async (e) =>  {
                 userFollowing : res.following
 
             }
+            //adding to the dom 
             addToDom(userData)
            }
             
-        }
-       
-        
-       
-        
+        }     
     } catch (error) {
         console.log(error);
         
     }
    
 }
-
+//submit event
 searchForm.addEventListener("submit", fetchUsersData);
+
+
+//adding to the dom Function
 const addToDom = (data) =>{
     savedList.style.display = "flex";
     savedList.innerHTML = ` <img src="${data.userImg}" alt="">
@@ -78,39 +81,34 @@ const addToDom = (data) =>{
             <span class="followers">followers : ${data.userfollowers}</span>
             <span class="following">following : ${data.userFollowing}</span>
             <button class="save-btn">save</button>`;
-
+            //creating new Element to add the list Saved users
             const div = document.createElement("div");
             div.className = "result-item";
             div.innerHTML = ` <img src="${data.userImg}" alt="">
             <h3 class="name">${data.userLogin}</h3>
             <h6 class="username">@${data.userName}</h6>
-            <span class="followers">followers : ${data.userfollowers}</span><br>
-            <span class="following">following : ${data.userFollowing}</span><br>
+            <span class="followers">followers : ${data.userfollowers}</span>
+            <span class="following">following : ${data.userFollowing}</span>
              <button class="delete-btn">Delete</button>`
-    // resultList.innerHTML += ` <div class="result-item">
-    //         <img src="${data.userImg}" alt="">
-    //         <h3 class="name">${data.userLogin}</h3>
-    //         <h6 class="username">@${data.userName}</h6>
-    //         <span class="followers">followers : ${data.userfollowers}</span>
-    //         <span class="following">following : ${data.userFollowing}</span>
-    //          <button class="delete-btn">Delete</button>
-    //     </div>`
 
-    resultList.appendChild(div);
-     const deleteBtn = div.querySelector(".delete-btn");
-        
+           resultList.appendChild(div);
+          const deleteBtn = div.querySelector(".delete-btn");
+
+          //calling attach handling function
             attachHandle(savedList,data,deleteBtn,div);
-            
+       
             
 }
 
+// attach handle function
 const attachHandle = (saved,data,deleteBtn,div) =>{
     const saveBtn = saved.querySelector(".save-btn");
-    
+    // save button event to save data
     saveBtn.addEventListener("click", () => {
         addToLocal(data);
         alert('user saved successfully!');
     })
+      // delete button event to delete data
     deleteBtn.addEventListener("click", ()=>{
         let oldData = getdataFromLocal();
    oldData =  oldData.filter(element => element.id != data.id);
@@ -120,13 +118,14 @@ const attachHandle = (saved,data,deleteBtn,div) =>{
      })
 }
 
-
+// adding data to the local storage 
 const addToLocal = (data) => {
     let oldData = getdataFromLocal();
      oldData.push(data)
     localStorage.setItem("data",JSON.stringify(oldData));
 }
 
+// get data from local storge 
 const getdataFromLocal = () =>{
     const oldData = JSON.parse(localStorage.getItem("data")) || [];
    return oldData;
